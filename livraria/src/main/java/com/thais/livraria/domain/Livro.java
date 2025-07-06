@@ -1,0 +1,108 @@
+package com.thais.livraria.domain;
+public class Livro implements java.io.Serializable {
+
+
+
+private int id;
+private String titulo;
+private int id_autor; 
+private int id_editora;
+private int ano_publicacao;
+private String genero;
+private double valor;
+private int quantidade;
+
+
+public Livro(String titulo, int id_autor, int id_editora, int ano_publicacao, int id, int quantidade, double valor, String genero) {
+    this.titulo = titulo;
+    this.id_autor = id_autor;
+    this.id_editora = id_editora;
+    this.ano_publicacao = ano_publicacao;
+    this.id = id;
+    this.genero = genero;
+    this.valor = valor;
+    this.quantidade = quantidade;
+}
+
+
+
+public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public int getid_autor() {
+            return id_autor;
+        }
+    
+        public void setid_autor(int id_autor) {
+            this.id_autor = id_autor;
+        }
+    
+        public int getid_editora() {
+            return id_editora;
+        }
+    
+        public void setid_editora(int id_editora) {
+            this.id_editora = id_editora;
+        }
+
+    public int getano_publicacao() {
+        return ano_publicacao;
+    }
+
+    public void setano_publicacao(int ano_publicacao) {
+        this.ano_publicacao = ano_publicacao;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getGenero() {
+            return genero;
+        }
+    public void setGenero(String genero) {
+            this.genero = genero;
+        }
+
+    public double getValor() {
+            return valor;
+        }
+    public void setValor(double valor) {
+            this.valor = valor;
+        }
+
+    public int getQuantidade() {
+            return quantidade;
+        }
+    public void setQuantidade(int quantidade) {
+            this.quantidade = quantidade;
+        }
+
+
+
+
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Livro livro = (Livro) o;
+    return id == livro.id;
+}
+
+@Override
+public int hashCode() {
+    return Integer.hashCode(id);
+}
+
+
+}
+
