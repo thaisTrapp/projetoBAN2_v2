@@ -23,7 +23,7 @@ public class LivroDto implements Serializable {
         id = obj.getId();
         titulo = obj.getTitulo();
         idAutor = obj.getIdAutor();
-        idEditora = obj.getIdAutor();
+        idEditora = obj.getIdEditora();
         anoPublicacao = obj.getAnoPublicacao();
         genero = obj.getGenero();
         valor = obj.getValor();
