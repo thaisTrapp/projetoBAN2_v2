@@ -1,13 +1,12 @@
-package com.thais.livraria.domain;
+package com.thais.livraria.dto;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import java.io.Serializable;
 
-@Document(collection = "livro")
-public class Livro implements java.io.Serializable {
+import com.thais.livraria.domain.Livro;
 
-    @Id
-    private String id; // preenchido  pelo MongoDB
+public class LivroDto implements Serializable {
+
+    private String id;
     private String titulo;
     private int idAutor;
     private int idEditora;
@@ -17,18 +16,21 @@ public class Livro implements java.io.Serializable {
     private int quantidade;
 
 
-    public Livro(String titulo, int idAutor, int idEditora, int anoPublicacao, String genero, double valor, int quantidade) {
-        this.titulo = titulo;
-        this.idAutor = idAutor;
-        this.idEditora = idEditora;
-        this.anoPublicacao = anoPublicacao;
-        this.genero = genero;
-        this.valor = valor;
-        this.quantidade = quantidade;
+    public LivroDto(){   
     }
 
-    public Livro() {
+    public LivroDto (Livro obj){
+        id = obj.getId();
+        titulo = obj.getTitulo();
+        idAutor = obj.getIdAutor();
+        idEditora = obj.getIdAutor();
+        anoPublicacao = obj.getAnoPublicacao();
+        genero = obj.getGenero();
+        valor = obj.getValor();
+        quantidade = obj.getQuantidade();
+
     }
+
 
     public String getId() {
         return id;
@@ -94,16 +96,7 @@ public class Livro implements java.io.Serializable {
         this.quantidade = quantidade;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Livro livro = (Livro) o;
-        return id != null ? id.equals(livro.id) : livro.id == null;
-    }
 
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+    
+
 }
