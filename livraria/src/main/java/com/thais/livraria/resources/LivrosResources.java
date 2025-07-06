@@ -2,6 +2,7 @@ package com.thais.livraria.resources;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.thais.livraria.domain.Livro;
@@ -31,4 +32,9 @@ public class LivrosResources {
     }
         
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<LivroDto> findById(@PathVariable String id) {
+        Livro obj = livroService.findById(id);
+        return ResponseEntity.ok().body(new LivroDto(obj));
+}
 }
