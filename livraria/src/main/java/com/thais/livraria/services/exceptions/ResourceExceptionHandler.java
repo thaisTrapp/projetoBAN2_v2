@@ -1,11 +1,11 @@
-package com.thais.livraria.resources.exceptions;
+package com.thais.livraria.services.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.thais.livraria.services.ObjectNotFoundException;
+import com.thais.livraria.resources.exceptions.StandartError;
 
 import jakarta.servlet.http.HttpServletRequest;
 

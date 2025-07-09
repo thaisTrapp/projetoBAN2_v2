@@ -5,10 +5,9 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.thais.livraria.domain.Livro;
+import com.thais.livraria.domain.Autor;
 
 @Repository
-public interface LivroRepository extends MongoRepository<Livro, String> {
-     Optional<Livro> findByTitulo(String titulo);
-
+public interface AutorRepository extends MongoRepository<Autor, String> {
+     Optional<Autor> findByNome(String nome);
 }

@@ -5,9 +5,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.dao.DuplicateKeyException;
 import com.thais.livraria.domain.Livro;
 import com.thais.livraria.dto.LivroDto;
 import com.thais.livraria.repository.LivroRepository;
+import com.thais.livraria.services.exceptions.DuplicateEntryException;
+import com.thais.livraria.services.exceptions.ObjectNotFoundException;
 
 
 @Service
@@ -33,13 +36,23 @@ public class LivroService {
     public Livro insert(LivroDto objDto) {
        Livro livro = fromDto(objDto);
         livro.setId(null);
-        return livroRep.save(livro);
+        try {
+            return livroRep.save(livro);
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateEntryException("Livro com este nome já existe.");
+        }
     }
+
     public Livro update(LivroDto objDto) { 
             Livro entity = findById(objDto.getId());
             updateData(entity, objDto);
-            return livroRep.save(entity);
+            try {
+                return livroRep.save(entity);
+            } catch (DuplicateKeyException e) {
+                throw new DuplicateEntryException("Livro com este nome já existe.");
         }
+    }  
+
 
     public void delete(String id) {
             findById(id);

@@ -1,4 +1,4 @@
-package com.thais.livraria.services;
+package com.thais.livraria.services.exceptions;
 
 public class ObjectNotFoundException extends RuntimeException {
     

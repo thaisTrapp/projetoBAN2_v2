@@ -1,6 +1,7 @@
 package com.thais.livraria.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "livro")
@@ -8,6 +9,7 @@ public class Livro implements java.io.Serializable {
 
     @Id
     private String id; // preenchido  pelo MongoDB
+    @Indexed(unique = true)
     private String titulo;
     private int idAutor;
     private int idEditora;
@@ -106,4 +108,5 @@ public class Livro implements java.io.Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }
