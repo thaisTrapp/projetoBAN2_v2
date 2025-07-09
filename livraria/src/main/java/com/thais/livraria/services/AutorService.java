@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import org.springframework.dao.DuplicateKeyException;
+
 import com.thais.livraria.domain.Autor;
 import com.thais.livraria.dto.AutorDto;
 import com.thais.livraria.repository.AutorRepository;
