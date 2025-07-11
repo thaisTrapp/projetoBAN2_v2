@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Atualizações</title>
+    <!-- Carrega Tailwind CSS para estilização rápida -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para o corpo e fontes */
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-gray-100 text-gray-800;
+        }
+        /* Garantir que todos os elementos tenham bordas arredondadas */
+        * {
+            @apply rounded-md;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6 text-indigo-700">Atualizar Cadastros</h1>
+
+        <!-- Botão para Voltar à Página Principal -->
+        <div class="mb-6 text-center">
+            <a href="index.html"
+               class="inline-block px-6 py-2 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                Voltar à Página Principal
+            </a>
+        </div>
+
+        <!-- Seção para Buscar Item para Edição -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Buscar Item para Editar</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="searchEntityType" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Entidade:</label>
+                    <select id="searchEntityType"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">Selecione o Tipo</option>
+                        <option value="livro">Livro</option>
+                        <option value="autor">Autor</option>
+                        <option value="editora">Editora</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="searchItemId" class="block text-sm font-medium text-gray-700 mb-1">ID do Item:</label>
+                    <input type="text" id="searchItemId" placeholder="Insira o ID do item"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="md:col-span-2 text-right">
+                    <button onclick="searchAndPopulateForm()"
+                            class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        Buscar Item
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de Edição (Inicialmente oculto) -->
+        <div id="editFormSection" class="hidden mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 id="editFormTitle" class="text-2xl font-semibold mb-4 text-indigo-600">Editar Item</h2>
+            <form id="formEditItem" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Campo ID (somente leitura) -->
+                <div class="md:col-span-2">
+                    <label for="editId" class="block text-sm font-medium text-gray-700 mb-1">ID:</label>
+                    <input type="text" id="editId" readonly
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm sm:text-sm">
+                    <input type="hidden" id="currentEntityType">
+                </div>
+
+                <!-- Campos de Livro (condicionais) -->
+                <div id="editLivroFields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+                    <div>
+                        <label for="editTitulo" class="block text-sm font-medium text-gray-700 mb-1">Título:</label>
+                        <input type="text" id="editTitulo"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editSelectAutor" class="block text-sm font-medium text-gray-700 mb-1">Autor:</label>
+                        <select id="editSelectAutor"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editSelectEditora" class="block text-sm font-medium text-gray-700 mb-1">Editora:</label>
+                        <select id="editSelectEditora"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editAnoPublicacao" class="block text-sm font-medium text-gray-700 mb-1">Ano Publicação:</label>
+                        <input type="number" id="editAnoPublicacao"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editGenero" class="block text-sm font-medium text-gray-700 mb-1">Gênero:</label>
+                        <input type="text" id="editGenero"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editValor" class="block text-sm font-medium text-gray-700 mb-1">Valor:</label>
+                        <input type="number" step="0.01" id="editValor"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="editQuantidade" class="block text-sm font-medium text-gray-700 mb-1">Quantidade:</label>
+                        <input type="number" id="editQuantidade"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <!-- Campos de Autor (condicionais) -->
+                <div id="editAutorFields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+                    <div>
+                        <label for="editAutorNome" class="block text-sm font-medium text-gray-700 mb-1">Nome do Autor:</label>
+                        <input type="text" id="editAutorNome"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editAutorNacionalidade" class="block text-sm font-medium text-gray-700 mb-1">Nacionalidade:</label>
+                        <input type="text" id="editAutorNacionalidade"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <!-- Campos de Editora (condicionais) -->
+                <div id="editEditoraFields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+                    <div>
+                        <label for="editEditoraNome" class="block text-sm font-medium text-gray-700 mb-1">Nome da Editora:</label>
+                        <input type="text" id="editEditoraNome"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <!-- Botões do Formulário -->
+                <div class="md:col-span-2 flex justify-end space-x-3 mt-4">
+                    <button type="button" onclick="hideEditForm()"
+                            class="px-5 py-2 bg-gray-300 text-gray-800 font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // --- Funções de Alerta Personalizadas ---
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `fixed top-4 right-4 p-4 rounded-md shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                'bg-blue-500'
+            } z-50`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        // --- Funções de Requisição HTTP Genéricas ---
+        async function fetchData(url, errorMessage) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(errorMessage, error);
+                showAlert(`${errorMessage}: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        async function putData(url, data, successMessage, errorMessage) {
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) { // PUT geralmente retorna 200 OK ou 204 No Content
+                    showAlert(successMessage, 'success');
+                    return true;
+                } else if (response.status === 400) {
+                    const errorData = await response.json();
+                    showAlert(`${errorMessage}: ${errorData.message || 'Dados inválidos.'}`, 'error');
+                    return false;
+                } else if (response.status === 404) {
+                    showAlert(`${errorMessage}: Item não encontrado.`, 'error');
+                    return false;
+                } else {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(errorMessage, error);
+                showAlert(`${errorMessage}: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // --- Funções para Popular Seleções (para Livro) ---
+        // Agora recebem o elemento select diretamente
+        async function popularSelectAutores(selectElement, selectedId = null) {
+            selectElement.innerHTML = '<option value="">Carregando Autores...</option>';
+            const autores = await fetchData(`${API_BASE_URL}/autor`, 'Erro ao carregar autores para seleção');
+            if (autores) {
+                selectElement.innerHTML = '<option value="">Selecione um Autor</option>';
+                autores.forEach(autor => {
+                    const option = document.createElement('option');
+                    option.value = autor.id;
+                    option.textContent = `${autor.nome} (ID: ${autor.id})`;
+                    if (selectedId && autor.id === selectedId) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                });
+            } else {
+                selectElement.innerHTML = '<option value="">Erro ao carregar Autores</option>';
+            }
+        }
+
+        // Agora recebem o elemento select diretamente
+        async function popularSelectEditoras(selectElement, selectedId = null) {
+            selectElement.innerHTML = '<option value="">Carregando Editoras...</option>';
+            const editoras = await fetchData(`${API_BASE_URL}/editora`, 'Erro ao carregar editoras para seleção');
+            if (editoras) {
+                selectElement.innerHTML = '<option value="">Selecione uma Editora</option>';
+                editoras.forEach(editora => {
+                    const option = document.createElement('option');
+                    option.value = editora.id;
+                    option.textContent = `${editora.nome} (ID: ${editora.id})`;
+                    if (selectedId && editora.id === selectedId) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                });
+            } else {
+                selectElement.innerHTML = '<option value="">Erro ao carregar Editoras</option>';
+            }
+        }
+
+        // --- Lógica do Formulário de Edição ---
+        const editFormSection = document.getElementById('editFormSection');
+        const formEditItem = document.getElementById('formEditItem');
+        const editId = document.getElementById('editId');
+        const currentEntityType = document.getElementById('currentEntityType'); // Campo oculto para o tipo de entidade
+
+        // Elementos de input para cada tipo
+        const editLivroFields = document.getElementById('editLivroFields');
+        const editTitulo = document.getElementById('editTitulo');
+        const editSelectAutor = document.getElementById('editSelectAutor');
+        const editSelectEditora = document.getElementById('editSelectEditora');
+        const editAnoPublicacao = document.getElementById('editAnoPublicacao');
+        const editGenero = document.getElementById('editGenero');
+        const editValor = document.getElementById('editValor');
+        const editQuantidade = document.getElementById('editQuantidade');
+
+        const editAutorFields = document.getElementById('editAutorFields');
+        const editAutorNome = document.getElementById('editAutorNome');
+        const editAutorNacionalidade = document.getElementById('editAutorNacionalidade');
+
+        const editEditoraFields = document.getElementById('editEditoraFields');
+        const editEditoraNome = document.getElementById('editEditoraNome');
+
+
+        function hideEditForm() {
+            editFormSection.classList.add('hidden');
+            formEditItem.reset(); // Limpa o formulário
+        }
+
+        async function searchAndPopulateForm() {
+            const entityType = document.getElementById('searchEntityType').value;
+            const itemId = document.getElementById('searchItemId').value;
+
+            if (!entityType || !itemId) {
+                showAlert('Por favor, selecione o tipo e insira o ID do item.', 'error');
+                return;
+            }
+
+            const item = await fetchData(`${API_BASE_URL}/${entityType}/${itemId}`, `Erro ao buscar ${entityType}`);
+
+            if (item) {
+                editFormSection.classList.remove('hidden'); // Mostra a seção do formulário
+                document.getElementById('editFormTitle').textContent = `Editar ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}`;
+                editId.value = item.id;
+                currentEntityType.value = entityType; // Seta o tipo de entidade no campo oculto
+
+                // Oculta todos os campos específicos primeiro
+                editLivroFields.classList.add('hidden');
+                editAutorFields.classList.add('hidden');
+                editEditoraFields.classList.add('hidden');
+
+                // Preenche e mostra os campos corretos
+                if (entityType === 'livro') {
+                    editLivroFields.classList.remove('hidden');
+                    editTitulo.value = item.titulo || '';
+                    editAnoPublicacao.value = item.anoPublicacao || '';
+                    editGenero.value = item.genero || '';
+                    editValor.value = item.valor || '';
+                    editQuantidade.value = item.quantidade || '';
+                    // Popula selects de autor/editora e seleciona o valor atual
+                    await popularSelectAutores(editSelectAutor, item.idAutor); // Passa o elemento select
+                    await popularSelectEditoras(editSelectEditora, item.idEditora); // Passa o elemento select
+                } else if (entityType === 'autor') {
+                    editAutorFields.classList.remove('hidden');
+                    editAutorNome.value = item.nome || '';
+                    editAutorNacionalidade.value = item.nacionalidade || '';
+                } else if (entityType === 'editora') {
+                    editEditoraFields.classList.remove('hidden');
+                    editEditoraNome.value = item.nome || '';
+                }
+                showAlert(`Item encontrado: ${item.nome || item.titulo || item.id}`, 'success');
+            } else {
+                hideEditForm(); // Oculta o formulário se o item não for encontrado
+            }
+        }
+
+        // Lidar com o envio do formulário de edição
+        formEditItem.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const id = editId.value;
+            const entityType = currentEntityType.value;
+            let updatedData = { id: id }; // O ID é sempre necessário para o PUT
+
+            // Coleta os dados do formulário com base no tipo de entidade
+            if (entityType === 'livro') {
+                updatedData.titulo = editTitulo.value;
+                updatedData.idAutor = editSelectAutor.value;
+                updatedData.idEditora = editSelectEditora.value;
+                updatedData.anoPublicacao = parseInt(editAnoPublicacao.value);
+                updatedData.genero = editGenero.value;
+                updatedData.valor = parseFloat(editValor.value);
+                updatedData.quantidade = parseInt(editQuantidade.value);
+            } else if (entityType === 'autor') {
+                updatedData.nome = editAutorNome.value;
+                updatedData.nacionalidade = editAutorNacionalidade.value;
+            } else if (entityType === 'editora') {
+                updatedData.nome = editEditoraNome.value;
+            }
+
+            const success = await putData(`${API_BASE_URL}/${entityType}/${id}`, updatedData,
+                                        `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} atualizado com sucesso!`,
+                                        `Erro ao atualizar ${entityType}`);
+            if (success) {
+                hideEditForm(); // Oculta o formulário de edição
+                // Opcional: Recarregar as listas na index.html se o usuário voltar
+            }
+        });
+
+        // Inicialização:
+        window.onload = async () => {
+            // Pre-popula os selects para o formulário de edição de Livro (caso seja o primeiro a ser buscado)
+            await popularSelectAutores(editSelectAutor);
+            await popularSelectEditoras(editSelectEditora);
+        };
+    </script>
+</body>
+</html>

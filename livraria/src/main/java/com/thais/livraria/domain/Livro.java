@@ -1,5 +1,6 @@
 package com.thais.livraria.domain;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,15 +12,15 @@ public class Livro implements java.io.Serializable {
     private String id; // preenchido  pelo MongoDB
     @Indexed(unique = true)
     private String titulo;
-    private int idAutor;
-    private int idEditora;
+    private ObjectId idAutor;
+    private ObjectId idEditora;
     private int anoPublicacao;
     private String genero;
     private double valor;
     private int quantidade;
 
 
-    public Livro(String titulo, int idAutor, int idEditora, int anoPublicacao, String genero, double valor, int quantidade) {
+    public Livro(String titulo, ObjectId idAutor, ObjectId idEditora, int anoPublicacao, String genero, double valor, int quantidade) {
         this.titulo = titulo;
         this.idAutor = idAutor;
         this.idEditora = idEditora;
@@ -48,19 +49,19 @@ public class Livro implements java.io.Serializable {
         this.titulo = titulo;
     }
 
-    public int getIdAutor() {
+    public ObjectId getIdAutor() {
         return idAutor;
     }
 
-    public void setIdAutor(int idAutor) {
+    public void setIdAutor(ObjectId idAutor) {
         this.idAutor = idAutor;
     }
 
-    public int getIdEditora() {
+    public ObjectId getIdEditora() {
         return idEditora;
     }
 
-    public void setIdEditora(int idEditora) {
+    public void setIdEditora(ObjectId idEditora) {
         this.idEditora = idEditora;
     }
 

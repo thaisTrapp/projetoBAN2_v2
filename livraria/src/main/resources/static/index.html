@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Livraria Completa (CRUD)</title>
+    <!-- Carrega Tailwind CSS para estilização rápida -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para o corpo e fontes */
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-gray-100 text-gray-800;
+        }
+        /* Garantir que todos os elementos tenham bordas arredondadas */
+        * {
+            @apply rounded-md;
+        }
+        /* Estilos para o alerta de confirmação (pop-up de deleção) */
+        .confirm-dialog {
+            @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl z-50 border border-gray-200;
+        }
+        .confirm-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6 text-indigo-700">Minha Livraria</h1>
+
+        <!-- Botões de Navegação -->
+        <div class="mb-6 text-center space-x-4">
+            <a href="updates.html"
+               class="inline-block px-6 py-2 bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                Ir para Página de Atualizações
+            </a>
+            <a href="consultas.html"
+               class="inline-block px-6 py-2 bg-green-700 text-white font-medium rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                Ir para Página de Consultas
+            </a>
+            <button onclick="location.reload()"
+                    class="px-6 py-2 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                Recarregar Página
+            </button>
+        </div>
+
+
+        <!-- Seção para Adicionar Novo Livro -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Adicionar Novo Livro</h2>
+            <form id="formNovoLivro" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="titulo" class="block text-sm font-medium text-gray-700 mb-1">Título:</label>
+                    <input type="text" id="titulo" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="selectAutor" class="block text-sm font-medium text-gray-700 mb-1">Autor:</label>
+                    <select id="selectAutor" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">Selecione um Autor</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="selectEditora" class="block text-sm font-medium text-gray-700 mb-1">Editora:</label>
+                    <select id="selectEditora" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">Selecione uma Editora</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="anoPublicacao" class="block text-sm font-medium text-gray-700 mb-1">Ano Publicação:</label>
+                    <input type="number" id="anoPublicacao" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="genero" class="block text-sm font-medium text-gray-700 mb-1">Gênero:</label>
+                    <input type="text" id="genero" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="valor" class="block text-sm font-medium text-gray-700 mb-1">Valor:</label>
+                    <input type="number" step="0.01" id="valor" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="quantidade" class="block text-sm font-medium text-gray-700 mb-1">Quantidade:</label>
+                    <input type="number" id="quantidade" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="md:col-span-2 text-right">
+                    <button type="submit"
+                            class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        Adicionar Livro
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Seção para Adicionar Novo Autor -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-600">Adicionar Novo Autor</h2>
+            <form id="formNovoAutor" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="autorNome" class="block text-sm font-medium text-gray-700 mb-1">Nome do Autor:</label>
+                    <input type="text" id="autorNome" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="autorNacionalidade" class="block text-sm font-medium text-gray-700 mb-1">Nacionalidade:</label>
+                    <input type="text" id="autorNacionalidade" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div class="md:col-span-2 text-right">
+                    <button type="submit"
+                            class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        Adicionar Autor
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Seção para Adicionar Nova Editora -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-purple-600">Adicionar Nova Editora</h2>
+            <form id="formNovaEditora" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="editoraNome" class="block text-sm font-medium text-gray-700 mb-1">Nome da Editora:</label>
+                    <input type="text" id="editoraNome" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                </div>
+                <div class="md:col-span-2 text-right">
+                    <button type="submit"
+                            class="px-5 py-2 bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200">
+                        Adicionar Editora
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Seção para Listar Livros -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Lista de Livros</h2>
+            <button onclick="carregarLivros()"
+                    class="px-5 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 mb-4">
+                Carregar Livros
+            </button>
+            <div id="livrosList" class="space-y-3">
+                <p class="text-gray-500">Nenhum livro carregado. Clique em "Carregar Livros".</p>
+            </div>
+        </div>
+
+        <!-- Seção para Listar Autores (para referência de IDs e CRUD) -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-600">Autores Cadastrados</h2>
+            <button onclick="carregarAutores()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Carregar Autores
+            </button>
+            <div id="autoresList" class="space-y-3">
+                <p class="text-gray-500">Nenhum autor carregado. Clique em "Carregar Autores".</p>
+            </div>
+        </div>
+
+        <!-- Seção para Listar Editoras (para referência de IDs e CRUD) -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-purple-600">Editoras Cadastradas</h2>
+            <button onclick="carregarEditoras()"
+                    class="px-5 py-2 bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 mb-4">
+                Carregar Editoras
+            </button>
+            <div id="editorasList" class="space-y-3">
+                <p class="text-gray-500">Nenhuma editora cadastrada.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Dialog -->
+    <div id="confirmDialog" class="confirm-dialog hidden">
+        <p class="mb-4 text-lg text-gray-700">Tem certeza que deseja excluir este item?</p>
+        <div class="flex justify-end space-x-3">
+            <button id="confirmCancel" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Cancelar</button>
+            <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Excluir</button>
+        </div>
+    </div>
+    <div id="confirmOverlay" class="confirm-overlay hidden"></div>
+
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // --- Funções de Alerta e Confirmação Personalizadas ---
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `fixed top-4 right-4 p-4 rounded-md shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                'bg-blue-500'
+            } z-50`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        function showConfirmDialog(message) {
+            return new Promise(resolve => {
+                const dialog = document.getElementById('confirmDialog');
+                const overlay = document.getElementById('confirmOverlay');
+                const confirmButton = document.getElementById('confirmDelete');
+                const cancelButton = document.getElementById('confirmCancel');
+
+                dialog.querySelector('p').textContent = message;
+                dialog.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+
+                const handleConfirm = () => {
+                    dialog.classList.add('hidden');
+                    overlay.classList.add('hidden');
+                    confirmButton.removeEventListener('click', handleConfirm);
+                    cancelButton.removeEventListener('click', handleCancel);
+                    resolve(true);
+                };
+
+                const handleCancel = () => {
+                    dialog.classList.add('hidden');
+                    overlay.classList.add('hidden');
+                    confirmButton.removeEventListener('click', handleConfirm);
+                    cancelButton.removeEventListener('click', handleCancel);
+                    resolve(false);
+                };
+
+                confirmButton.addEventListener('click', handleConfirm);
+                cancelButton.addEventListener('click', handleCancel);
+            });
+        }
+
+        // --- Funções de Requisição HTTP Genéricas ---
+        async function fetchData(url, errorMessage) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    // Tenta ler a resposta de erro do servidor se disponível
+                    const errorBody = await response.text();
+                    let detailedErrorMessage = errorBody;
+                    try {
+                        const errorJson = JSON.parse(errorBody);
+                        detailedErrorMessage = errorJson.message || errorBody;
+                    } catch (e) {
+                        // Não é um JSON, usa o texto puro
+                    }
+                    throw new Error(`Erro HTTP! Status: ${response.status} - ${detailedErrorMessage}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(errorMessage, error);
+                showAlert(`${errorMessage}: ${error.message}. Por favor, verifique o console do backend para mais detalhes.`, 'error');
+                return null;
+            }
+        }
+
+        async function postData(url, data, successMessage, errorMessage) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    showAlert(successMessage, 'success');
+                    return true;
+                } else if (response.status === 400) {
+                    const errorData = await response.json();
+                    showAlert(`${errorMessage}: ${errorData.message || 'Dados inválidos.'}`, 'error');
+                    return false;
+                } else {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(errorMessage, error);
+                showAlert(`${errorMessage}: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function deleteData(url, successMessage, errorMessage) {
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) { // DELETE geralmente retorna 200 OK ou 204 No Content
+                    showAlert(successMessage, 'success');
+                    return true;
+                } else if (response.status === 404) {
+                    showAlert(`${errorMessage}: Item não encontrado.`, 'error');
+                    return false;
+                } else {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(errorMessage, error);
+                showAlert(`${errorMessage}: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // --- Funções para Popular Seleções ---
+        async function popularSelectAutores(selectElement, selectedId = null) {
+            selectElement.innerHTML = '<option value="">Carregando Autores...</option>';
+            const autores = await fetchData(`${API_BASE_URL}/autor`, 'Erro ao carregar autores para seleção');
+            if (autores) {
+                selectElement.innerHTML = '<option value="">Selecione um Autor</option>';
+                autores.forEach(autor => {
+                    const option = document.createElement('option');
+                    option.value = autor.id;
+                    option.textContent = `${autor.nome} (ID: ${autor.id})`;
+                    if (selectedId && autor.id === selectedId) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                });
+            } else {
+                selectElement.innerHTML = '<option value="">Erro ao carregar Autores</option>';
+            }
+        }
+
+        async function popularSelectEditoras(selectElement, selectedId = null) {
+            selectElement.innerHTML = '<option value="">Carregando Editoras...</option>';
+            const editoras = await fetchData(`${API_BASE_URL}/editora`, 'Erro ao carregar editoras para seleção');
+            if (editoras) {
+                selectElement.innerHTML = '<option value="">Selecione uma Editora</option>';
+                editoras.forEach(editora => {
+                    const option = document.createElement('option');
+                    option.value = editora.id;
+                    option.textContent = `${editora.nome} (ID: ${editora.id})`;
+                    if (selectedId && editora.id === selectedId) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                });
+            } else {
+                selectElement.innerHTML = '<option value="">Erro ao carregar Editoras</option>';
+            }
+        }
+
+        // --- Funções para Carregar e Exibir Listas ---
+        async function carregarLivros() {
+            const livrosListDiv = document.getElementById('livrosList');
+            livrosListDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const livros = await fetchData(`${API_BASE_URL}/livro`, 'Erro ao carregar livros');
+            if (livros) {
+                if (livros.length === 0) {
+                    livrosListDiv.innerHTML = '<p class="text-gray-500">Nenhum livro cadastrado ainda.</p>';
+                } else {
+                    livrosListDiv.innerHTML = '';
+                    livros.forEach(livro => {
+                        const livroItem = document.createElement('div');
+                        livroItem.className = 'bg-gray-50 p-4 rounded-md shadow-sm border border-gray-100 flex justify-between items-center';
+                        const valorFormatado = livro.valor ? `R$${livro.valor.toFixed(2)}` : 'N/A';
+                        livroItem.innerHTML = `
+                            <div>
+                                <p class="text-lg font-semibold text-indigo-800">${livro.titulo}</p>
+                                <p class="text-sm text-gray-600">Ano: ${livro.anoPublicacao} | Gênero: ${livro.genero}</p>
+                                <p class="text-sm text-gray-600">Valor: ${valorFormatado} | Quantidade: ${livro.quantidade}</p>
+                                <p class="text-xs text-gray-500 mt-1">ID: ${livro.id}</p>
+                                <p class="text-xs text-gray-500">ID Autor: ${livro.idAutor || 'Não informado'} | ID Editora: ${livro.idEditora || 'Não informado'}</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="redirectToUpdatePage('livro', '${livro.id}')"
+                                        class="px-3 py-1 bg-yellow-500 text-white text-sm rounded-md hover:bg-yellow-600">Editar</button>
+                                <button onclick="handleDelete('livro', '${livro.id}')"
+                                        class="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600">Excluir</button>
+                            </div>
+                        `;
+                        livrosListDiv.appendChild(livroItem);
+                    });
+                }
+            }
+        }
+
+        async function carregarAutores() {
+            const autoresListDiv = document.getElementById('autoresList');
+            autoresListDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const autores = await fetchData(`${API_BASE_URL}/autor`, 'Erro ao carregar autores');
+            if (autores) {
+                if (autores.length === 0) {
+                    autoresListDiv.innerHTML = '<p class="text-gray-500">Nenhum autor cadastrado ainda.</p>';
+                } else {
+                    autoresListDiv.innerHTML = '';
+                    autores.forEach(autor => {
+                        const autorItem = document.createElement('div');
+                        autorItem.className = 'bg-gray-50 p-4 rounded-md shadow-sm border border-gray-100 flex justify-between items-center';
+                        autorItem.innerHTML = `
+                            <div>
+                                <p class="text-lg font-semibold text-blue-800">${autor.nome}</p>
+                                <p class="text-sm text-gray-600">Nacionalidade: ${autor.nacionalidade}</p>
+                                <p class="text-xs text-gray-500 mt-1">ID: ${autor.id}</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="redirectToUpdatePage('autor', '${autor.id}')"
+                                        class="px-3 py-1 bg-yellow-500 text-white text-sm rounded-md hover:bg-yellow-600">Editar</button>
+                                <button onclick="handleDelete('autor', '${autor.id}')"
+                                        class="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600">Excluir</button>
+                            </div>
+                        `;
+                        autoresListDiv.appendChild(autorItem);
+                    });
+                }
+            }
+        }
+
+        async function carregarEditoras() {
+            const editorasListDiv = document.getElementById('editorasList');
+            editorasListDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const editoras = await fetchData(`${API_BASE_URL}/editora`, 'Erro ao carregar editoras');
+            if (editoras) {
+                if (editoras.length === 0) {
+                    editorasListDiv.innerHTML = '<p class="text-gray-500">Nenhuma editora cadastrada.</p>';
+                } else {
+                    editorasListDiv.innerHTML = '';
+                    editoras.forEach(editora => {
+                        const editoraItem = document.createElement('div');
+                        editoraItem.className = 'bg-gray-50 p-4 rounded-md shadow-sm border border-gray-100 flex justify-between items-center';
+                        editoraItem.innerHTML = `
+                            <div>
+                                <p class="text-lg font-semibold text-purple-800">${editora.nome}</p>
+                                <p class="text-xs text-gray-500 mt-1">ID: ${editora.id}</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="redirectToUpdatePage('editora', '${editora.id}')"
+                                        class="px-3 py-1 bg-yellow-500 text-white text-sm rounded-md hover:bg-yellow-600">Editar</button>
+                                <button onclick="handleDelete('editora', '${editora.id}')"
+                                        class="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600">Excluir</button>
+                            </div>
+                        `;
+                        editorasListDiv.appendChild(editoraItem);
+                    });
+                }
+            }
+        }
+
+        // --- Função para Redirecionar para a Página de Atualizações ---
+        function redirectToUpdatePage(entityType, id) {
+            window.location.href = `updates.html?type=${entityType}&id=${id}`;
+        }
+
+
+        // --- Event Listeners para Formulários de Adição (POST) ---
+
+        // Livro
+        document.getElementById('formNovoLivro').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const selectAutor = document.getElementById('selectAutor');
+            const selectEditora = document.getElementById('selectEditora');
+
+            if (!selectAutor.value) { showAlert('Por favor, selecione um Autor.', 'error'); return; }
+            if (!selectEditora.value) { showAlert('Por favor, selecione uma Editora.', 'error'); return; }
+
+            const novoLivro = {
+                titulo: document.getElementById('titulo').value,
+                idAutor: selectAutor.value,
+                idEditora: selectEditora.value,
+                anoPublicacao: parseInt(document.getElementById('anoPublicacao').value),
+                genero: document.getElementById('genero').value,
+                valor: parseFloat(document.getElementById('valor').value),
+                quantidade: parseInt(document.getElementById('quantidade').value),
+            };
+
+            const success = await postData(`${API_BASE_URL}/livro`, novoLivro, 'Livro adicionado com sucesso!', 'Erro ao adicionar livro');
+            if (success) {
+                document.getElementById('formNovoLivro').reset();
+                selectAutor.value = "";
+                selectEditora.value = "";
+                carregarLivros();
+            }
+        });
+
+        // Autor
+        document.getElementById('formNovoAutor').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const novoAutor = {
+                nome: document.getElementById('autorNome').value,
+                nacionalidade: document.getElementById('autorNacionalidade').value,
+            };
+
+            const success = await postData(`${API_BASE_URL}/autor`, novoAutor, 'Autor adicionado com sucesso!', 'Erro ao adicionar autor');
+            if (success) {
+                document.getElementById('formNovoAutor').reset();
+                carregarAutores();
+                popularSelectAutores(document.getElementById('selectAutor')); // Atualiza o select de autores para livros
+            }
+        });
+
+        // Editora
+        document.getElementById('formNovaEditora').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const novaEditora = {
+                nome: document.getElementById('editoraNome').value,
+            };
+
+            const success = await postData(`${API_BASE_URL}/editora`, novaEditora, 'Editora adicionada com sucesso!', 'Erro ao adicionar editora');
+            if (success) {
+                document.getElementById('formNovaEditora').reset();
+                carregarEditoras();
+                popularSelectEditoras(document.getElementById('selectEditora')); // Atualiza o select de editoras para livros
+            }
+        });
+
+
+        // Carrega as listas e popula os selects ao carregar a página
+        window.onload = async () => {
+            // Passa os elementos select para as funções de popular
+            await popularSelectAutores(document.getElementById('selectAutor'));
+            await popularSelectEditoras(document.getElementById('selectEditora'));
+            await carregarLivros();
+            await carregarAutores();
+            await carregarEditoras();
+        };
+    </script>
+</body>
+</html>

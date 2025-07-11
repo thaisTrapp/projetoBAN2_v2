@@ -2,14 +2,16 @@ package com.thais.livraria.dto;
 
 import java.io.Serializable;
 
+import org.bson.types.ObjectId;
+
 import com.thais.livraria.domain.Livro;
 
 public class LivroDto implements Serializable {
 
     private String id;
     private String titulo;
-    private int idAutor;
-    private int idEditora;
+    private ObjectId idAutor;
+    private ObjectId idEditora;
     private int anoPublicacao;
     private String genero;
     private double valor;
@@ -48,19 +50,19 @@ public class LivroDto implements Serializable {
         this.titulo = titulo;
     }
 
-    public int getIdAutor() {
+    public ObjectId getIdAutor() {
         return idAutor;
     }
 
-    public void setIdAutor(int idAutor) {
+    public void setIdAutor(ObjectId idAutor) {
         this.idAutor = idAutor;
     }
 
-    public int getIdEditora() {
+    public ObjectId getIdEditora() {
         return idEditora;
     }
 
-    public void setIdEditora(int idEditora) {
+    public void setIdEditora(ObjectId idEditora) {
         this.idEditora = idEditora;
     }
 

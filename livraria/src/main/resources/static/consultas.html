@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Consultas</title>
+    <!-- Carrega Tailwind CSS para estilização rápida -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para o corpo e fontes */
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-gray-100 text-gray-800;
+        }
+        /* Garantir que todos os elementos tenham bordas arredondadas */
+        * {
+            @apply rounded-md;
+        }
+        .result-box {
+            @apply bg-gray-50 p-4 rounded-md shadow-sm border border-gray-100 mb-3;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6 text-indigo-700">Consultas e Relatórios</h1>
+
+        <!-- Botão para Voltar à Página Principal -->
+        <div class="mb-6 text-center">
+            <a href="index.html"
+               class="inline-block px-6 py-2 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                Voltar à Página Principal
+            </a>
+        </div>
+
+        <!-- Relatório: Livros com Detalhes do Autor -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Relatório: Livros com Detalhes do Autor</h2>
+            <p class="text-gray-600 mb-4">Mostra o título do livro, seu preço e a nacionalidade do autor, permitindo identificar os mais caros por nacionalidade.</p>
+            <button onclick="carregarLivrosComAutorDetalhes()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Gerar Relatório
+            </button>
+            <div id="livrosComAutorDetalhesResult" class="space-y-2"></div>
+        </div>
+
+        <!-- Relatório: Livros com Detalhes da Editora -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Relatório: Livros com Detalhes da Editora</h2>
+            <button onclick="carregarLivrosComEditoraDetalhes()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Gerar Relatório
+            </button>
+            <div id="livrosComEditoraDetalhesResult" class="space-y-2"></div>
+        </div>
+
+        <!-- Relatório: Livros de um Autor Específico em uma Editora Específica -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Relatório: Livros por Autor e Editora</h2>
+            <p class="text-gray-600 mb-4">Busca livros de um autor específico publicado por uma editora específica.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="inputNomeAutor" class="block text-sm font-medium text-gray-700 mb-1">Nome do Autor:</label>
+                    <input type="text" id="inputNomeAutor" placeholder="Ex: Arthur Conan Doyle"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="inputNomeEditora" class="block text-sm font-medium text-gray-700 mb-1">Nome da Editora:</label>
+                    <input type="text" id="inputNomeEditora" placeholder="Ex: Companhia das Letras"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+            </div>
+            <button onclick="carregarLivrosPorAutorEEditora()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Buscar Livros
+            </button>
+            <div id="livrosPorAutorEEditoraResult" class="space-y-2"></div>
+        </div>
+
+        <!-- Consulta: Top 3 Livros Mais Caros -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Consulta: Top 3 Livros Mais Caros</h2>
+            <button onclick="carregarTop3LivrosCaros()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Mostrar Top 3
+            </button>
+            <div id="top3LivrosCarosResult" class="space-y-2"></div>
+        </div>
+
+        <!-- Consulta: Livros Publicados nos Últimos 20 Anos -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Consulta: Livros Publicados nos Últimos 20 Anos</h2>
+            <button onclick="carregarLivrosUltimos20Anos()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Mostrar Livros
+            </button>
+            <div id="livrosUltimos20AnosResult" class="space-y-2"></div>
+        </div>
+
+        <!-- Consulta: Número de Livros por Editora (apenas editoras com mais de 1 livro) -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Consulta: Número de Livros por Editora (> 1 Livro)</h2>
+            <button onclick="carregarLivrosPorEditora()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Mostrar Contagem
+            </button>
+            <div id="livrosPorEditoraResult" class="space-y-2"></div>
+        </div>
+
+        <!-- Consulta: Preço Médio dos Livros por Nacionalidade de Autor -->
+        <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Consulta: Preço Médio por Nacionalidade de Autor</h2>
+            <button onclick="carregarPrecoMedioPorNacionalidade()"
+                    class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 mb-4">
+                Mostrar Preço Médio
+            </button>
+            <div id="precoMedioPorNacionalidadeResult" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // --- Funções de Alerta Personalizadas (copiadas do index.html) ---
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `fixed top-4 right-4 p-4 rounded-md shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                'bg-blue-500'
+            } z-50`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        // --- Funções de Requisição HTTP Genéricas (copiadas do index.html) ---
+        async function fetchData(url, errorMessage) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(errorMessage, error);
+                showAlert(`${errorMessage}: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        // --- Funções para Carregar Resultados de Consultas ---
+
+        async function carregarTop3LivrosCaros() {
+            const resultDiv = document.getElementById('top3LivrosCarosResult');
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const livros = await fetchData(`${API_BASE_URL}/livro/consultas/top-3-caros`, 'Erro ao carregar top 3 livros');
+            if (livros) {
+                if (livros.length === 0) {
+                    resultDiv.innerHTML = '<p class="text-gray-500">Nenhum livro encontrado.</p>';
+                } else {
+                    resultDiv.innerHTML = '';
+                    livros.forEach(livro => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        itemDiv.innerHTML = `<p class="font-semibold">${livro.titulo}</p><p>Preço: R$${livro.valor ? livro.valor.toFixed(2) : 'N/A'}</p>`;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        async function carregarLivrosUltimos20Anos() {
+            const resultDiv = document.getElementById('livrosUltimos20AnosResult');
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const livros = await fetchData(`${API_BASE_URL}/livro/consultas/ultimos-20-anos`, 'Erro ao carregar livros dos últimos 20 anos');
+            if (livros) {
+                if (livros.length === 0) {
+                    resultDiv.innerHTML = '<p class="text-gray-500">Nenhum livro encontrado.</p>';
+                } else {
+                    resultDiv.innerHTML = '';
+                    livros.forEach(livro => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        itemDiv.innerHTML = `<p class="font-semibold">${livro.titulo}</p><p>Ano: ${livro.anoPublicacao}</p>`;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        async function carregarLivrosPorEditora() {
+            const resultDiv = document.getElementById('livrosPorEditoraResult');
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const results = await fetchData(`${API_BASE_URL}/livro/consultas/contagem-por-editora`, 'Erro ao carregar contagem por editora');
+            if (results) {
+                if (results.length === 0) {
+                    resultDiv.innerHTML = '<p class="text-gray-500">Nenhum resultado encontrado.</p>';
+                } else {
+                    resultDiv.innerHTML = '';
+                    results.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        // Supondo que o backend retorna um campo 'nomeEditora' e 'totalLivros'
+                        itemDiv.innerHTML = `<p class="font-semibold">Editora: ${item.nomeEditora || item._id}</p><p>Total de Livros: ${item.totalLivros}</p>`;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        async function carregarPrecoMedioPorNacionalidade() {
+            const resultDiv = document.getElementById('precoMedioPorNacionalidadeResult');
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const results = await fetchData(`${API_BASE_URL}/livro/consultas/preco-medio-por-nacionalidade`, 'Erro ao carregar preço médio por nacionalidade');
+            if (results) {
+                if (results.length === 0) {
+                    resultDiv.innerHTML = '<p class="text-gray-500">Nenhum resultado encontrado.</p>';
+                } else {
+                    resultDiv.innerHTML = '';
+                    results.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        // Supondo que o backend retorna um campo 'nacionalidade' e 'precoMedio'
+                        itemDiv.innerHTML = `<p class="font-semibold">Nacionalidade: ${item.nacionalidade || 'Não informada'}</p><p>Preço Médio: R$${item.precoMedio ? item.precoMedio.toFixed(2) : 'N/A'}</p>`;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        async function carregarLivrosComAutorDetalhes() {
+            const resultDiv = document.getElementById('livrosComAutorDetalhesResult');
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const results = await fetchData(`${API_BASE_URL}/livro/relatorios/livros-com-autores`, 'Erro ao carregar livros com detalhes do autor');
+            if (results) {
+                if (results.length === 0) {
+                    resultDiv.innerHTML = '<p class="text-gray-500">Nenhum livro encontrado com detalhes do autor.</p>';
+                } else {
+                    resultDiv.innerHTML = '';
+                    results.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        itemDiv.innerHTML = `
+                            <p class="font-semibold">Título: ${item.tituloLivro}</p>
+                            <p>Autor: ${item.nomeAutor || 'Desconhecido'} (${item.nacionalidadeAutor || 'N/A'})</p>
+                            <p>Ano: ${item.anoPublicacaoLivro} | Gênero: ${item.generoLivro}</p>
+                            <p>Valor: R$${item.valorLivro ? item.valorLivro.toFixed(2) : 'N/A'}</p>
+                        `;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        async function carregarLivrosComEditoraDetalhes() {
+            const resultDiv = document.getElementById('livrosComEditoraDetalhesResult');
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const results = await fetchData(`${API_BASE_URL}/livro/relatorios/livros-com-editoras`, 'Erro ao carregar livros com detalhes da editora');
+            if (results) {
+                if (results.length === 0) {
+                    resultDiv.innerHTML = '<p class="text-gray-500">Nenhum livro encontrado com detalhes da editora.</p>';
+                } else {
+                    resultDiv.innerHTML = '';
+                    results.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        itemDiv.innerHTML = `
+                            <p class="font-semibold">Título: ${item.tituloLivro}</p>
+                            <p>Editora: ${item.nomeEditora || 'Desconhecida'}</p>
+                            <p>Ano: ${item.anoPublicacaoLivro} | Gênero: ${item.generoLivro}</p>
+                            <p>Valor: R$${item.valorLivro ? item.valorLivro.toFixed(2) : 'N/A'}</p>
+                        `;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        async function carregarLivrosPorAutorEEditora() {
+            const nomeAutor = document.getElementById('inputNomeAutor').value;
+            const nomeEditora = document.getElementById('inputNomeEditora').value;
+            const resultDiv = document.getElementById('livrosPorAutorEEditoraResult');
+
+            if (!nomeAutor || !nomeEditora) {
+                showAlert('Por favor, preencha o nome do autor e da editora.', 'error');
+                resultDiv.innerHTML = '';
+                return;
+            }
+
+            resultDiv.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+            const results = await fetchData(`${API_BASE_URL}/livro/relatorios/livros-por-autor-editora?nomeAutor=${encodeURIComponent(nomeAutor)}&nomeEditora=${encodeURIComponent(nomeEditora)}`, 'Erro ao buscar livros por autor e editora');
+
+            if (results) {
+                if (results.length === 0) {
+                    resultDiv.innerHTML = `<p class="text-gray-500">Nenhum livro encontrado para "${nomeAutor}" e "${nomeEditora}".</p>`;
+                } else {
+                    resultDiv.innerHTML = '';
+                    results.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'result-box';
+                        itemDiv.innerHTML = `
+                            <p class="font-semibold">Título: ${item.tituloLivro}</p>
+                            <p>Autor: ${item.nomeAutor} | Editora: ${item.nomeEditora}</p>
+                            <p>Ano: ${item.anoPublicacaoLivro} | Gênero: ${item.generoLivro}</p>
+                            <p>Valor: R$${item.valorLivro ? item.valorLivro.toFixed(2) : 'N/A'}</p>
+                        `;
+                        resultDiv.appendChild(itemDiv);
+                    });
+                }
+            }
+        }
+
+        // Carrega todas as consultas ao carregar a página (opcional, pode ser manual)
+        window.onload = async () => {
+            // carregarTop3LivrosCaros();
+            // carregarLivrosUltimos20Anos();
+            // carregarLivrosPorEditora();
+            // carregarPrecoMedioPorNacionalidade();
+            // carregarLivrosComAutorDetalhes();
+            // carregarLivrosComEditoraDetalhes();
+        };
+    </script>
+</body>
+</html>
